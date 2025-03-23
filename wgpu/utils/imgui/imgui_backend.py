@@ -177,7 +177,8 @@ class ImguiWgpuBackend:
         # convert to c int32, because imgui requires it
         # todo: id_32 may be duplicated with two different textures, we need to handle this
         id_32 = ctypes.c_int32(id(self._font_texture_view)).value
-        self.io.fonts.tex_id = id_32
+        self.io.fonts.python_set_texture_id(id_32)
+
         self._texture_views[id_32] = self._font_texture_view
         self.io.fonts.clear_tex_data()
 
@@ -435,8 +436,7 @@ class ImguiWgpuBackend:
 
             for command in commands.cmd_buffer:
                 # todo command.user_callback
-
-                tex_id = command.texture_id
+                tex_id = command.get_tex_id()
 
                 if tex_id not in self._image_bind_groups:
                     image_bind_group = self._device.create_bind_group(
